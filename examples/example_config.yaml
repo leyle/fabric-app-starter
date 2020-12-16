@@ -1,0 +1,30 @@
+debug: false
+
+# api server listen address
+server:
+  host: "0.0.0.0"
+  port: "3000"
+
+# fabric connection config
+fabric:
+  ccPath: "/tmp/connection.yaml"
+  walletPath: "/tmp/wallets"
+  caHost: "rca.org1.fabric.test"
+
+admin:
+  username: "orgadmin"
+  password: "passwd"
+
+sqlite:
+  dbPath: "/tmp/emalibctest.db"
+
+# jwt
+jwt:
+  secret: "emali.io.secret"
+  # hours
+  # 10days = 10 * 24
+  expire: 240
+
+express:
+  host: "localhost"
+  port: "3001"
