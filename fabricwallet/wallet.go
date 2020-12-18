@@ -21,11 +21,16 @@ func NewWallet(ctx *context.ApiContext) (*gateway.Wallet, error) {
 
 func NewGateway(ctx *context.ApiContext, userId string) (*gateway.Gateway, error) {
 	gwCfg := gateway.WithConfig(config.FromFile(ctx.Cfg.Fabric.CCPath))
-	identity := gateway.WithIdentity(ctx.Wallet, userId)
+	wallet, err := NewWallet(ctx)
+	if err != nil {
+		return nil, err
+	}
+	identity := gateway.WithIdentity(wallet, userId)
 	gw, err := gateway.Connect(gwCfg, identity)
 	if err != nil {
 		Logger.Errorf("", "create fabric gateway failed, userId[%s], reason: %s", userId, err.Error())
 		return nil, err
 	}
+	Logger.Debug("", "create fabric gateway object success")
 	return gw, nil
 }

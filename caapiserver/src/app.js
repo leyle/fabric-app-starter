@@ -31,6 +31,8 @@ if(args.length !== 3) {
 
 let config = parseConfig(args[2]);
 console.log(`Host: ${config.express.host}`);
+const walletPath = config.fabric.walletPath;
+insurePathExist(walletPath);
 
 // parse config file
 function parseConfig(file) {
@@ -43,6 +45,16 @@ function parseConfig(file) {
     } catch (e) {
         console.log(`load config[${file}]failed, ${e}`);
         process.exit(1);
+    }
+}
+
+function insurePathExist(path) {
+    // check if path exists
+    // if not, create it
+    if(!fs.existsSync(path)) {
+        // create it
+        console.log(`Path: ${path} doesn't exist, create it...`);
+        fs.mkdirSync(path);
     }
 }
 
@@ -167,9 +179,14 @@ app.post('/api/ca/register', async (req, res) => {
     }
 
     const reqJson = req.body;
-    const userId = reqJson.userId;
-    const passwd = reqJson.passwd;
+    const userId = reqJson.userId || "";
+    const passwd = reqJson.passwd || "";
     console.log(`userId: ${userId}, passwd: ${passwd}`);
+
+    if(userId === "" || passwd === "") {
+        res.status(400).json({"msg": "userId or passwd can't be null"});
+        return;
+    }
 
     const ret = await registerAndEnrollUser(caClient, wallet, userId, passwd);
     if(ret === FuncCallFailed) {
@@ -190,9 +207,13 @@ app.post('/api/ca/enroll', async (req, res) => {
     }
 
     const reqJson = req.body;
-    const userId = reqJson.userId;
-    const passwd = reqJson.passwd;
+    const userId = reqJson.userId || "";
+    const passwd = reqJson.passwd || "";
     console.log(`userId: ${userId}, passwd: ${passwd}`);
+    if(userId === "" || passwd === "") {
+        res.status(400).json({"msg": "userId or passwd can't be null"});
+        return;
+    }
 
     const ret = await enrollUser(caClient, wallet, userId, passwd);
     if(ret === FuncCallFailed) {

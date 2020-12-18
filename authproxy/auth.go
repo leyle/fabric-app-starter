@@ -59,6 +59,7 @@ func Auth(ctx *context.ApiContext, c *gin.Context) {
 		returnfun.Return401Json(c, "Invalid token")
 		return
 	}
+	Logger.Infof(middleware.GetReqId(c), "token check ok, current user: id[%s]|userId[%s]|username[%s]|role[%s]", claim.Id, claim.UserId, claim.Username, claim.Role)
 
 	// 2. check user has enrolled
 	wallet, err := fabricwallet.NewWallet(ctx)
@@ -80,10 +81,11 @@ func Auth(ctx *context.ApiContext, c *gin.Context) {
 		returnfun.ReturnJson(c, 500, 500, "GetGateway failed", nil)
 		return
 	}
+	defer gw.Close()
 
 	// 4. save to current user's context
 	SetUser(c, claim)
-	SetGateway(c, gw)
+	// SetGateway(c, gw)
 
 	c.Next()
 }

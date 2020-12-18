@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/leyle/fabric-app-starter/chaincodeapi"
 	"github.com/leyle/fabric-app-starter/context"
-	"github.com/leyle/fabric-app-starter/fabricwallet"
 	"github.com/leyle/fabric-app-starter/jwtserver"
 	. "github.com/leyle/ginbase/consolelog"
 	"github.com/leyle/ginbase/middleware"
@@ -47,13 +47,6 @@ func main() {
 		return
 	}
 
-	// new fabricwallet instance
-	wallet, err := fabricwallet.NewWallet(ctx)
-	if err != nil {
-		return
-	}
-	ctx.Wallet = wallet
-
 	go httpServer(ctx)
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
@@ -70,7 +63,12 @@ func httpServer(ctx *context.ApiContext) {
 	}
 
 	apiRouter := e.Group("/api")
+
+	// auth server
 	jwtserver.JWTRouter(ctx, apiRouter.Group(""))
+
+	// chaincode api
+	chaincodeapi.PublicAndPrivateRouter(ctx, apiRouter.Group(""))
 
 	addr := ctx.Cfg.Server.GetServerAddr()
 	err = e.Run(addr)
