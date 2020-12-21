@@ -7,16 +7,16 @@ server:
 
 # fabric connection config
 fabric:
-  ccPath: "/tmp/connection.yaml"
-  walletPath: "/tmp/wallets"
-  caHost: "rca.org1.fabric.test"
+  ccPath: "/tmp/.fabricappworkdir/connection.yaml"
+  walletPath: "/tmp/.fabricappworkdir/wallet"
+  orgName: "org1"
 
 admin:
   username: "orgadmin"
   password: "passwd"
 
 sqlite:
-  dbPath: "/tmp/emalibctest.db"
+  dbPath: "/tmp/.fabricappworkdir/emalibctest.db"
 
 # jwt
 jwt:

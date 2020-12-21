@@ -2,7 +2,10 @@ package context
 
 import (
 	"fmt"
+	. "github.com/leyle/ginbase/consolelog"
 	"github.com/spf13/viper"
+	"os"
+	"syscall"
 )
 
 type Config struct {
@@ -39,6 +42,7 @@ func (s *ServerConf) GetServerAddr() string {
 type FabricGWOption struct {
 	CCPath     string `json:"ccPath" yaml:"ccPath"`         // connection config file path
 	WalletPath string `json:"walletPath" yaml:"walletPath"` // file type fabricwallet path
+	OrgName    string `json:"orgName" yaml:"orgName"`
 }
 
 type AdminOption struct {
@@ -75,5 +79,34 @@ func (c *Config) LoadConf(filePath string) error {
 		fmt.Println(err.Error())
 		return err
 	}
+	return nil
+}
+
+// minPermission:
+// 4 -> only check if can read
+// 4 + 2 = 6 -> check if can read and write
+func CheckPathExist(path string, permission int, desc string) error {
+	// first check if exist
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			Logger.Errorf("", "%s[%s] doesn't exist", desc, path)
+		} else {
+			Logger.Errorf("", "%s[%s] failed, %s", desc, path, err.Error())
+		}
+		return err
+	}
+
+	// then check if can read or read/write
+	var bit uint32 = syscall.O_RDWR
+	if permission < 6 {
+		bit = syscall.O_RDONLY
+	}
+
+	err := syscall.Access(path, bit)
+	if err != nil {
+		Logger.Errorf("", "%s[%s] cannot access, %s", desc, path, err.Error())
+		return err
+	}
+
 	return nil
 }

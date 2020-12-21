@@ -58,7 +58,7 @@ func CreateHandler(ctx *context.ApiContext, c *gin.Context) {
 		publicForm.DataId = form.DataId
 		resp := public.CallPublicChainCode(ctx, c, publicForm)
 		if resp.Error != nil {
-			apiResp.CCResp = resp.CCRet
+			apiResp.CCResp = resp.Error.Error()
 			returnfun.ReturnJson(c, 400, 400, "", apiResp)
 			return
 		}

@@ -13,19 +13,19 @@ type CCApiResponse struct {
 	Error error
 
 	// input dataId, return as original
-	DataId string
+	DataId string `json:"dataId"`
 
 	// chaincode data row key
-	CCRet []byte
+	CCRet []byte `json:"ccRet"`
 
-	CCId string
+	CCId string `json:"ccId"`
 }
 
 type ApiResponse struct {
 	// return input data
 	Result bool `json:"result"`
 
-	CCResp []byte `json:"ccResp"`
+	CCResp string `json:"ccResp"`
 	App    string `json:"app"`
 	DataId string `json:"dataId"`
 }

@@ -1,0 +1,71 @@
+{
+    "name": "fabricapp",
+    "version": "1.0.0",
+    "client": {
+        "organization": "org1",
+        "credentialStore": {
+            "path": "/tmp/.fabricappworkdir/identitypublickey"
+        },
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": 300
+                }
+            }
+        }
+    },
+    "organizations": {
+        "org1": {
+            "mspid": "org1MSP",
+            "peers": [
+                "peer0.org1.fabric.test"
+            ],
+            "certificateAuthorities": [
+                "rca.org1.fabric.test"
+            ],
+            "cryptoPath": "/tmp/.fabricappworkdir/identitypublickey"
+        }
+    },
+    "peers": {
+        "peer0.org1.fabric.test": {
+            "url": "grpcs://peer0.org1.fabric.test:7051",
+            "tlsCACerts": {
+                "pem": "-----BEGIN CERTIFICATE-----\nMIIC5TCCAoygAwIBAgIUI8rwuW0gfGqeLNEiWV3jBAD3qNAwCgYIKoZIzj0EAwIw\naTELMAkGA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQK\nEwtIeXBlcmxlZGdlcjEPMA0GA1UECxMGRmFicmljMRowGAYDVQQDExF0bHNjYS5m\nYWJyaWMudGVzdDAeFw0yMDEyMjEwNjQ2MDBaFw0yMTEyMjEwNjUxMDBaMGwxCzAJ\nBgNVBAYTAlVTMRcwFQYDVQQIEw5Ob3J0aCBDYXJvbGluYTEUMBIGA1UEChMLSHlw\nZXJsZWRnZXIxDTALBgNVBAsTBHBlZXIxHzAdBgNVBAMTFnBlZXIwLm9yZzEuZmFi\ncmljLnRlc3QwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATDuwwgJkNpF/pCsgDX\neK6QR+jUcq3DJJwy/4zLXHJZwIxFqnTlB4iXEGV3iOut1srWOBIy2j5x2qkPicOY\nOsIwo4IBDTCCAQkwDgYDVR0PAQH/BAQDAgOoMB0GA1UdJQQWMBQGCCsGAQUFBwMB\nBggrBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBSzIwk2fBmJGcg1v7vy\nXyMWQCO2PjAfBgNVHSMEGDAWgBQ5U1VSkC3NrpLUxFGUkYuG02GtwjAhBgNVHREE\nGjAYghZwZWVyMC5vcmcxLmZhYnJpYy50ZXN0MGcGCCoDBAUGBwgBBFt7ImF0dHJz\nIjp7ImhmLkFmZmlsaWF0aW9uIjoiIiwiaGYuRW5yb2xsbWVudElEIjoicGVlcjAu\nb3JnMS5mYWJyaWMudGVzdCIsImhmLlR5cGUiOiJwZWVyIn19MAoGCCqGSM49BAMC\nA0cAMEQCIAMoCecvmJPpryGxfHT/js3XfA7abfc1hcKzxlK1+BtRAiB3RSnej8kR\nKq7j/2GjpUWQxvwM1WFw3EY2uYAhJXMZQg==\n-----END CERTIFICATE-----"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.org1.fabric.test",
+                "hostnameOverride": "peer0.org1.fabric.test"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "rca.org1.fabric.test": {
+            "url": "https://rca.org1.fabric.test:7054",
+            "caName": "rca.org1.fabric.test",
+            "tlsCACerts": {
+                "pem": [
+                    "-----BEGIN CERTIFICATE-----\nMIICMDCCAdagAwIBAgIUBwo8vIlM3vCeILQFTPd4EILvDFowCgYIKoZIzj0EAwIw\nbDELMAkGA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQK\nEwtIeXBlcmxlZGdlcjEPMA0GA1UECxMGRmFicmljMR0wGwYDVQQDExRyY2Eub3Jn\nMS5mYWJyaWMudGVzdDAeFw0yMDEyMjEwNjQ2MDBaFw0zNTEyMTgwNjQ2MDBaMGwx\nCzAJBgNVBAYTAlVTMRcwFQYDVQQIEw5Ob3J0aCBDYXJvbGluYTEUMBIGA1UEChML\nSHlwZXJsZWRnZXIxDzANBgNVBAsTBkZhYnJpYzEdMBsGA1UEAxMUcmNhLm9yZzEu\nZmFicmljLnRlc3QwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAARhfWF7CFx0WNJq\nJVSXwt0RWpGalm8a4jfenBU51ldbQlE2MyTCKTd+LNfbAsVEYDZuyJfZXKDjxEZg\nirZVrlIKo1YwVDAOBgNVHQ8BAf8EBAMCAQYwEgYDVR0TAQH/BAgwBgEB/wIBATAd\nBgNVHQ4EFgQUaxvoZY2uJAIdh1GB7k0xWzxMPx4wDwYDVR0RBAgwBocEAAAAADAK\nBggqhkjOPQQDAgNIADBFAiEA/NkqDYaRyQx3RbKzCmo6/o/cizLdBW869cK4TSi2\nkgsCIB3PPzCgC9az6rMihfv3CbVPZRWaAmH1qqp+VkcqPQh5\n-----END CERTIFICATE-----"
+                ]
+            },
+            "httpOptions": {
+                "verify": false
+            },
+            "registrar": {
+                "enrollId": "orgadmin",
+                "enrollSecret": "passwd"
+            }
+        },
+        "tlsca.fabric.test": {
+            "url": "https://tlsca.fabric.test:7054",
+            "caName": "tlsca.fabric.test",
+            "tlsCACerts": {
+                "pem": [
+                    "-----BEGIN CERTIFICATE-----\nMIICKjCCAdCgAwIBAgIUIYeleV6XodAP1vmKwx4yR8h/BqAwCgYIKoZIzj0EAwIw\naTELMAkGA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQK\nEwtIeXBlcmxlZGdlcjEPMA0GA1UECxMGRmFicmljMRowGAYDVQQDExF0bHNjYS5m\nYWJyaWMudGVzdDAeFw0yMDEyMDcxMDEwMDBaFw0zNTEyMDQxMDEwMDBaMGkxCzAJ\nBgNVBAYTAlVTMRcwFQYDVQQIEw5Ob3J0aCBDYXJvbGluYTEUMBIGA1UEChMLSHlw\nZXJsZWRnZXIxDzANBgNVBAsTBkZhYnJpYzEaMBgGA1UEAxMRdGxzY2EuZmFicmlj\nLnRlc3QwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQcCNJMhLZzUU89xCVb/jR4\n+T0KNmio9C/lBSHYpK/xtWpMWbLVhL4yT/JAAx7lHInVcalo/NttyGMFOrvM0s93\no1YwVDAOBgNVHQ8BAf8EBAMCAQYwEgYDVR0TAQH/BAgwBgEB/wIBATAdBgNVHQ4E\nFgQUOVNVUpAtza6S1MRRlJGLhtNhrcIwDwYDVR0RBAgwBocEAAAAADAKBggqhkjO\nPQQDAgNIADBFAiEAxLPJmfSN78TDrdDCVU57y+UEe1oYwmBBYmwAVsackQMCIAny\nUZeLs9vYIEv6puYw+iARQNPY7bB7SMUDMHM7TsRu\n-----END CERTIFICATE-----"
+                ]
+            },
+            "httpOptions": {
+                "verify": false
+            }
+        }
+    }
+}

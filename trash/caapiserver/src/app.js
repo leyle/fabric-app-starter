@@ -68,6 +68,10 @@ function getCaClient(cfg) {
         console.log(ccp);
         // some keys exist in connection.yaml
         const caInfo = ccp.certificateAuthorities[caHost];
+        console.log('yyyyyyyyyyyyyy');
+        console.log(caInfo);
+        console.log('xxxxxxxxxxxxxxxxxxx');
+        console.log(caInfo.caName);
         const caTLSCerts = caInfo.tlsCACerts.pem;
         const caClient = new fabricCaClient(caInfo.url, {trustedRoots: caTLSCerts, verify: false}, caInfo.caName);
 

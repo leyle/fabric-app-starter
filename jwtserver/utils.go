@@ -48,3 +48,32 @@ func RegisterAndEnrollCaUser(ctx *context.ApiContext, userId, passwd string) err
 
 	return nil
 }
+
+func EnrollCaUser(ctx *context.ApiContext, userId, passwd string) error {
+	url := getFullApi(ctx, FabricCaApiEnroll)
+
+	type EnrollForm struct {
+		UserId string `json:"userId"`
+		Passwd string `json:"passwd"`
+	}
+
+	form := &EnrollForm{
+		UserId: userId,
+		Passwd: passwd,
+	}
+
+	data, _ := json.Marshal(form)
+	headers := make(map[string]string)
+	headers["Content-Type"] = "application/json"
+	resp, err := util.HttpPost(url, data, headers)
+	if err != nil {
+		Logger.Errorf("", "enroll ca user[%s] failed, %s", userId, err.Error())
+		return err
+	}
+	if resp.StatusCode != http.StatusOK {
+		Logger.Errorf("", "enroll ca user[%s] failed, %d", userId, resp.StatusCode)
+		return errors.New("enroll ca user failed")
+	}
+
+	return nil
+}

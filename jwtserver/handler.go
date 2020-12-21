@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/leyle/fabric-app-starter/authproxy"
 	"github.com/leyle/fabric-app-starter/context"
+	"github.com/leyle/fabric-app-starter/fabricwallet"
 	. "github.com/leyle/ginbase/consolelog"
 	"github.com/leyle/ginbase/middleware"
 	"github.com/leyle/ginbase/returnfun"
@@ -92,10 +93,10 @@ func CreateUserHandler(ctx *context.ApiContext, c *gin.Context) {
 	defer ds.Close()
 
 	// register user has two step
-	// 1. create useraccount
-	// 2. register/enroll ca
+	// 1. register/enroll ca
+	// 2. create user account
 
-	// 1. check if username repeat
+	// 0. prepare user account
 	dbua, err := GetUserByUsername(ds, form.Username)
 	middleware.StopExec(err)
 	if dbua != nil {
@@ -103,7 +104,6 @@ func CreateUserHandler(ctx *context.ApiContext, c *gin.Context) {
 		return
 	}
 
-	// 2. save user
 	salt := util.GenerateDataId()
 	passHash := util.GenerateHashPasswd(salt, form.Password)
 	ua := &UserAccount{
@@ -116,16 +116,23 @@ func CreateUserHandler(ctx *context.ApiContext, c *gin.Context) {
 		CreatedAt: util.CurUnixTime(),
 	}
 	ua.UpdatedAt = ua.CreatedAt
-	err = SaveUserAccount(ds, ua)
-	middleware.StopExec(err)
 
-	// call caapi register/enroll ca
-	err = RegisterAndEnrollCaUser(ctx, ua.Id, ua.PassHash)
+	// 1. register/enroll ca
+	err = fabricwallet.RegisterCaUser(ctx, ua.Id, ua.PassHash, fabricwallet.FabricCAUserTypeUser)
 	if err != nil {
+		Logger.Errorf(middleware.GetReqId(c), "register user[%s] ca failed, %s", form.Username, err.Error())
 		returnfun.ReturnErrJson(c, err.Error())
 		return
 	}
 
-	returnfun.ReturnOKJson(c, "")
+	// 2. save user account into local db
+	err = SaveUserAccount(ds, ua)
+	middleware.StopExec(err)
+
+	retData := gin.H{
+		"username": form.Username,
+		"caId":     ua.Id,
+	}
+	returnfun.ReturnOKJson(c, retData)
 	return
 }

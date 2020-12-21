@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/leyle/fabric-app-starter/chaincodeapi"
 	"github.com/leyle/fabric-app-starter/context"
+	"github.com/leyle/fabric-app-starter/fabricwallet"
 	"github.com/leyle/fabric-app-starter/jwtserver"
 	. "github.com/leyle/ginbase/consolelog"
 	"github.com/leyle/ginbase/middleware"
@@ -82,49 +83,26 @@ func preCheck(ctx *context.ApiContext) error {
 	var err error
 
 	// check fabric connection file exist
-	err = checkPathExist(ctx.Cfg.Fabric.CCPath, 4, "fabric connection file")
+	err = context.CheckPathExist(ctx.Cfg.Fabric.CCPath, 4, "fabric connection file")
 	if err != nil {
 		return err
 	}
 
 	// check fabricwallet exist and can read write
-	err = checkPathExist(ctx.Cfg.Fabric.WalletPath, 6, "fabric fabricwallet")
+	err = context.CheckPathExist(ctx.Cfg.Fabric.WalletPath, 6, "fabric fabricwallet")
 	if err != nil {
-		return err
+		// try to create it
+		Logger.Infof("", "wallet path %s doesn't exist, try to create it", ctx.Cfg.Fabric.WalletPath)
+		err = os.MkdirAll(ctx.Cfg.Fabric.WalletPath, os.ModePerm)
+		if err != nil {
+			Logger.Errorf("", "try to create wallet path[%s] failed, %s", ctx.Cfg.Fabric.WalletPath, err.Error())
+			return err
+		}
 	}
 
 	// init system admin user and enroll ca credentials
 	err = initAdmin(ctx)
 	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// minPermission:
-// 4 -> only check if can read
-// 4 + 2 = 6 -> check if can read and write
-func checkPathExist(path string, permission int, desc string) error {
-	// first check if exist
-	if _, err := os.Stat(path); err != nil {
-		if os.IsNotExist(err) {
-			Logger.Errorf("", "%s[%s] doesn't exist", desc, path)
-		} else {
-			Logger.Errorf("", "%s[%s] failed, %s", desc, path, err.Error())
-		}
-		return err
-	}
-
-	// then check if can read or read/write
-	var bit uint32 = syscall.O_RDWR
-	if permission < 6 {
-		bit = syscall.O_RDONLY
-	}
-
-	err := syscall.Access(path, bit)
-	if err != nil {
-		Logger.Errorf("", "%s[%s] cannot access, %s", desc, path, err.Error())
 		return err
 	}
 
@@ -163,5 +141,16 @@ func initAdmin(ctx *context.ApiContext) error {
 		}
 	}
 
-	return nil
+	// enroll admin
+	return enrollAdmin(ctx)
+}
+
+func enrollAdmin(ctx *context.ApiContext) error {
+	// check if wallets/{orgadmin}.id exists
+	userId := ctx.Cfg.Admin.Username
+	passwd := ctx.Cfg.Admin.Password
+
+	err := fabricwallet.EnrollUser(ctx, userId, passwd)
+
+	return err
 }
