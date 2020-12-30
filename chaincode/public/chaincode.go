@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 	. "github.com/leyle/ginbase/consolelog"
@@ -11,6 +12,8 @@ import (
 // universal public chaincode
 // use couchdb as world state database
 // implement CRUD
+
+var ErrNoIdData = errors.New("no id data")
 
 type UniversalContract struct {
 	contractapi.Contract
@@ -131,7 +134,7 @@ func (uc *UniversalContract) GetById(ctx contractapi.TransactionContextInterface
 	}
 	if dataJson == nil {
 		Logger.Errorf("", "GetById[%s], data not exist", id)
-		return nil, nil
+		return nil, ErrNoIdData
 	}
 	var storage StorageIn
 	err = json.Unmarshal(dataJson, &storage)

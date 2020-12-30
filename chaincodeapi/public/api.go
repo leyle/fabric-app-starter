@@ -1,17 +1,13 @@
 package public
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/leyle/fabric-app-starter/authproxy"
+	"github.com/leyle/fabric-app-starter/chaincodeapi/helper"
 	"github.com/leyle/fabric-app-starter/chaincodeapi/model"
 	"github.com/leyle/fabric-app-starter/context"
-	"github.com/leyle/fabric-app-starter/fabricwallet"
-	"github.com/leyle/ginbase/consolelog"
-	"github.com/leyle/ginbase/middleware"
 )
 
 // call public chaincode
-type PublicForm struct {
+type CreatePublicForm struct {
 	App    string `json:"-"`
 	DataId string `json:"-"`
 
@@ -21,49 +17,53 @@ type PublicForm struct {
 	DataJson string `json:"dataJson" binding:"required"`
 }
 
-func CallPublicChainCode(ctx *context.ApiContext, c *gin.Context, form *PublicForm) *model.CCApiResponse {
-	reqId := middleware.GetReqId(c)
-	ccResp := &model.CCApiResponse{
-		Error:  nil,
-		DataId: form.DataId,
-	}
-	// get fabric gateway
-	curUser := authproxy.GetCurUser(c)
-	gw, err := fabricwallet.NewGateway(ctx, curUser.UserId)
-	if err != nil {
-		ccResp.Error = err
+func CallPublicChainCodeCreate(ctx *context.ApiContext, form *CreatePublicForm) *model.CCApiResponse {
+	ccResp := model.NewCCApiResponse()
+	ccResp.DataId = form.DataId
+
+	contractRet := helper.GetContract(ctx, form.Channel, form.ChainCode)
+	if contractRet.Err != nil {
+		ccResp.Error = contractRet.Err
 		return ccResp
 	}
-	defer gw.Close()
-	// gw := authproxy.GetGateway(c)
-	// if gw == nil {
-	// 	err := errors.New("get fabric gateway failed")
-	// 	consolelog.Logger.Errorf(reqId, "call public chaincode, %s", err.Error())
-	// 	ccResp.Error = err
-	// 	return ccResp
-	// }
-
-	// get network
-	network, err := gw.GetNetwork(form.Channel)
-	if err != nil {
-		consolelog.Logger.Errorf(reqId, "call public chaincode, get channel failed, %s", err.Error())
-		ccResp.Error = err
-		return ccResp
-	}
-
-	// get contract
-	contract := network.GetContract(form.ChainCode)
+	defer contractRet.Close()
+	contract := contractRet.Contract
 
 	// call chaincode's create method
 	// chaincode's create method locates on chaincode/public/chaincode.go#Create
 	// func (uc *UniversalContract) Create(ctx contractapi.TransactionContextInterface, app, dataId, data string) error
 	ret, err := contract.SubmitTransaction(model.CCNameCreate, form.App, form.DataId, form.DataJson)
 	if err != nil {
-		consolelog.Logger.Errorf(reqId, "call pubic chaincode, Create failed, %s", err.Error())
+		ctx.Logger().Error().Err(err).Str("channel", form.Channel).Str("chaincode", form.ChainCode).Msg("call public chaincode, submit failed")
 		ccResp.Error = err
 		return ccResp
 	}
-	consolelog.Logger.Infof(reqId, "call public chaincode, Create success, result is: %s", string(ret))
+	ctx.Logger().Info().Str("channel", form.Channel).Str("chaincode", form.ChainCode).Str("result", string(ret)).Msg("success")
+	ccResp.CCRet = ret
+
+	return ccResp
+}
+
+func CallPublicChaincodeGetById(ctx *context.ApiContext, form *model.GetByIdForm) *model.CCApiResponse {
+	ccResp := model.NewCCApiResponse()
+	ccResp.DataId = form.DataId
+	contractRet := helper.GetContract(ctx, form.Channel, form.ChainCode)
+	if contractRet.Err != nil {
+		ccResp.Error = contractRet.Err
+		return ccResp
+	}
+	defer contractRet.Close()
+	contract := contractRet.Contract
+
+	// func (uc *UniversalContract) GetById(ctx contractapi.TransactionContextInterface, app, dataId string) (*StorageOut, error)
+	ret, err := contract.EvaluateTransaction(model.CCNameGetById, form.App, form.DataId)
+	if err != nil {
+		ctx.Logger().Error().Err(err).Str("channel", form.Channel).Str("chaincode", form.ChainCode).Msg("call public chaincode, get by id failed")
+		ccResp.Error = err
+		return ccResp
+	}
+
+	ctx.Logger().Info().Str("channel", form.Channel).Str("chaincode", form.ChainCode).Str("result", string(ret)).Msg("success")
 	ccResp.CCRet = ret
 
 	return ccResp

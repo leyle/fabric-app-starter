@@ -1,5 +1,7 @@
 package model
 
+import "encoding/json"
+
 // chaincode method names
 // see chaincode/public/chaincode.go and chaincode/private/chaincode.go
 const (
@@ -23,13 +25,30 @@ type CCApiResponse struct {
 
 type ApiResponse struct {
 	// return input data
-	Result bool `json:"result"`
+	Success bool   `json:"success"`
+	ErrMsg  string `json:"errMsg"`
 
-	CCResp string `json:"ccResp"`
-	App    string `json:"app"`
-	DataId string `json:"dataId"`
+	CCResp json.RawMessage `json:"response"`
+	App    string          `json:"app"`
+	DataId string          `json:"dataId"`
 }
 
 // error type todo
 type CCError struct {
+}
+
+func NewCCApiResponse() *CCApiResponse {
+	return &CCApiResponse{}
+}
+
+type GetByIdForm struct {
+	// application name
+	App string `json:"app" binding:"required"`
+
+	// dataId, it should be unique in entire applications
+	DataId string `json:"dataId" binding:"required"`
+
+	// channel and chaincode
+	Channel   string `json:"channel" binding:"required"`
+	ChainCode string `json:"chaincode" binding:"required"`
 }

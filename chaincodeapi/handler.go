@@ -1,13 +1,11 @@
 package chaincodeapi
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/leyle/fabric-app-starter/chaincodeapi/model"
 	"github.com/leyle/fabric-app-starter/chaincodeapi/private"
 	"github.com/leyle/fabric-app-starter/chaincodeapi/public"
 	"github.com/leyle/fabric-app-starter/context"
-	"github.com/leyle/ginbase/middleware"
-	"github.com/leyle/ginbase/returnfun"
+	"github.com/leyle/go-api-starter/ginhelper"
 )
 
 // create handler
@@ -19,21 +17,22 @@ type CreateForm struct {
 	DataId string `json:"dataId" binding:"required"`
 
 	// public data
-	Public *public.PublicForm `json:"public"`
+	Public *public.CreatePublicForm `json:"public"`
 
 	// private data
 	Private *private.PrivateForm `json:"private"`
 }
 
-func CreateHandler(ctx *context.ApiContext, c *gin.Context) {
+func CreateHandler(ctx *context.ApiContext) {
+	c := ctx.C
 	var form CreateForm
 	err := c.BindJSON(&form)
-	middleware.StopExec(err)
+	ginhelper.StopExec(err)
 
-	apiResp := model.ApiResponse{
-		Result: false,
-		App:    form.App,
-		DataId: form.DataId,
+	apiResp := &model.ApiResponse{
+		Success: false,
+		App:     form.App,
+		DataId:  form.DataId,
 	}
 
 	// public data call public chaincode
@@ -48,7 +47,7 @@ func CreateHandler(ctx *context.ApiContext, c *gin.Context) {
 	if privateForm != nil {
 		privateForm.App = form.App
 		privateForm.DataId = form.DataId
-		err = private.CallPrivateChainCode(ctx, c, privateForm)
+		err = private.CallPrivateChainCode(ctx, privateForm)
 	}
 
 	// 2. check if we need to create public data
@@ -56,14 +55,37 @@ func CreateHandler(ctx *context.ApiContext, c *gin.Context) {
 	if publicForm != nil {
 		publicForm.App = form.App
 		publicForm.DataId = form.DataId
-		resp := public.CallPublicChainCode(ctx, c, publicForm)
+		resp := public.CallPublicChainCodeCreate(ctx, publicForm)
 		if resp.Error != nil {
-			apiResp.CCResp = resp.Error.Error()
-			returnfun.ReturnJson(c, 400, 400, "", apiResp)
+			apiResp.ErrMsg = resp.Error.Error()
+			ginhelper.ReturnJson(c, 400, 400, "", apiResp)
 			return
 		}
 	}
 
-	apiResp.Result = true
-	returnfun.ReturnOKJson(c, apiResp)
+	apiResp.Success = true
+	ginhelper.ReturnOKJson(c, apiResp)
+}
+
+func GetByIdHandler(ctx *context.ApiContext) {
+	var form model.GetByIdForm
+	err := ctx.C.BindJSON(&form)
+	ginhelper.StopExec(err)
+
+	apiResp := &model.ApiResponse{
+		Success: false,
+		App:     form.App,
+		DataId:  form.DataId,
+	}
+
+	resp := public.CallPublicChaincodeGetById(ctx, &form)
+	if resp.Error != nil {
+		apiResp.ErrMsg = resp.Error.Error()
+		ginhelper.ReturnJson(ctx.C, 400, 400, "", apiResp)
+		return
+	}
+
+	apiResp.CCResp = resp.CCRet
+	apiResp.Success = true
+	ginhelper.ReturnOKJson(ctx.C, apiResp)
 }

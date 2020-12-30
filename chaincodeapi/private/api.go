@@ -1,7 +1,6 @@
 package private
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/leyle/fabric-app-starter/context"
 )
 
@@ -16,6 +15,6 @@ type PrivateForm struct {
 	DataJson string `json:"dataJson" binding:"required"`
 }
 
-func CallPrivateChainCode(ctx *context.ApiContext, c *gin.Context, form *PrivateForm) error {
+func CallPrivateChainCode(ctx *context.ApiContext, form *PrivateForm) error {
 	return nil
 }

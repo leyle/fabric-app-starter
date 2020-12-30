@@ -2,7 +2,6 @@ package context
 
 import (
 	"fmt"
-	. "github.com/leyle/ginbase/consolelog"
 	"github.com/spf13/viper"
 	"os"
 	"syscall"
@@ -18,16 +17,14 @@ type Config struct {
 	Fabric *FabricGWOption `json:"fabric" yaml:"fabric"`
 
 	// system initial admin
+	// ca registrar
 	Admin *AdminOption `json:"admin" yaml:"admin"`
 
-	// sqlite3
-	Sqlite *SqliteOption `json:"sqlite" yaml:"sqlite"`
+	// couchdb options
+	Couchdb *CouchdbOption `json:"couchdb" yaml:"couchdb"`
 
 	// JWT
 	JWT *JWTOption `json:"jwt" yaml:"jwt"`
-
-	// express server
-	Express *ExpressOption `json:"express" yaml:"express"`
 }
 
 type ServerConf struct {
@@ -50,19 +47,17 @@ type AdminOption struct {
 	Password string `json:"password" yaml:"password"`
 }
 
-type SqliteOption struct {
-	// sqlite3 file full path
-	DbPath string `json:"dbPath" yaml:"dbPath"`
+type CouchdbOption struct {
+	// HostPort is host:port format e.g 127.0.0.1:5984
+	HostPort      string `json:"hostPort" yaml:"hostPort"`
+	User          string `json:"user" yaml:"user"`
+	Passwd        string `json:"passwd" yaml:"passwd"`
+	DefaultDBName string `json:"defaultDBName" yaml:"defaultDBName"`
 }
 
 type JWTOption struct {
-	Secret string `json:"secret" yaml:"secret"`
-	Expire int    `json:"expire" yaml:"expire"`
-}
-
-type ExpressOption struct {
-	Host string `json:"host" yaml:"host"`
-	Port string `json:"port" yaml:"port"`
+	Secret      string `json:"secret" yaml:"secret"`
+	ExpireHours int    `json:"expireHours" yaml:"exporeHours"`
 }
 
 func (c *Config) LoadConf(filePath string) error {
@@ -89,9 +84,9 @@ func CheckPathExist(path string, permission int, desc string) error {
 	// first check if exist
 	if _, err := os.Stat(path); err != nil {
 		if os.IsNotExist(err) {
-			Logger.Errorf("", "%s[%s] doesn't exist", desc, path)
+			// Logger.Errorf("", "%s[%s] doesn't exist", desc, path)
 		} else {
-			Logger.Errorf("", "%s[%s] failed, %s", desc, path, err.Error())
+			// Logger.Errorf("", "%s[%s] failed, %s", desc, path, err.Error())
 		}
 		return err
 	}
@@ -104,7 +99,7 @@ func CheckPathExist(path string, permission int, desc string) error {
 
 	err := syscall.Access(path, bit)
 	if err != nil {
-		Logger.Errorf("", "%s[%s] cannot access, %s", desc, path, err.Error())
+		// Logger.Errorf("", "%s[%s] cannot access, %s", desc, path, err.Error())
 		return err
 	}
 

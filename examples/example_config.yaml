@@ -1,9 +1,10 @@
+# when debug is true, server will log request headers
 debug: false
 
 # api server listen address
 server:
   host: "0.0.0.0"
-  port: "3000"
+  port: "9000"
 
 # fabric connection config
 fabric:
@@ -11,20 +12,21 @@ fabric:
   walletPath: "/tmp/.fabricappworkdir/wallet"
   orgName: "org1"
 
+# used for jwt and ca registrar
 admin:
   username: "orgadmin"
   password: "passwd"
 
-sqlite:
-  dbPath: "/tmp/.fabricappworkdir/emalibctest.db"
+couchdb:
+  hostPort: "localhost:5984"
+  user: "admin"
+  passwd: "passwd"
+  defaultDbName: "useraccount"
 
 # jwt
 jwt:
   secret: "emali.io.secret"
   # hours
   # 10days = 10 * 24
-  expire: 240
+  expireHours: 240
 
-express:
-  host: "localhost"
-  port: "3001"

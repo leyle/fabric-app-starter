@@ -1,0 +1,20 @@
+version: '3.6'
+
+networks:
+  couchdb-nt:
+    name: $NETWORK
+
+services:
+  couchdb:
+    image: couchdb:$TAG
+    container_name: $CONTAINER
+    environment:
+      - TZ=$TIMEZONE
+      - COUCHDB_USER=$ROOTUSER
+      - COUCHDB_PASSWORD=$ROOTPASSWD
+    volumes:
+      - $PWD/data:/opt/couchdb/data
+    networks:
+      - couchdb-nt
+    ports:
+      - $PORT:5984
