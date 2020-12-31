@@ -49,10 +49,10 @@ type AdminOption struct {
 
 type CouchdbOption struct {
 	// HostPort is host:port format e.g 127.0.0.1:5984
-	HostPort      string `json:"hostPort" yaml:"hostPort"`
-	User          string `json:"user" yaml:"user"`
-	Passwd        string `json:"passwd" yaml:"passwd"`
-	DefaultDBName string `json:"defaultDBName" yaml:"defaultDBName"`
+	HostPort string `json:"hostPort" yaml:"hostPort"`
+	User     string `json:"user" yaml:"user"`
+	Passwd   string `json:"passwd" yaml:"passwd"`
+	Protocol string `json:"protocol" yaml:"protocol"`
 }
 
 type JWTOption struct {

@@ -7,6 +7,7 @@ import (
 	"github.com/leyle/fabric-app-starter/context"
 	"github.com/leyle/fabric-user-manager/apirouter"
 	"github.com/leyle/fabric-user-manager/model"
+	"github.com/leyle/go-api-starter/couchdb"
 	"github.com/leyle/go-api-starter/ginhelper"
 	"github.com/leyle/go-api-starter/logmiddleware"
 	"os"
@@ -36,7 +37,6 @@ func main() {
 		conf.Server.Port = port
 	}
 
-	// sqlite init and check
 	jwtCtx := setupJWTContext(&conf)
 	ctx := &context.ApiContext{
 		Cfg:    &conf,
@@ -68,6 +68,11 @@ func httpServer(ctx *context.ApiContext) {
 	apiRouter := e.Group("/api")
 
 	// jwt/ca api
+	err = apirouter.Init(ctx.JWTCtx)
+	if err != nil {
+		logger.Error().Err(err).Send()
+		return
+	}
 	apirouter.JWTRouter(ctx.JWTCtx, apiRouter.Group(""))
 
 	// chaincode api
@@ -106,11 +111,11 @@ func preCheck(ctx *context.ApiContext) error {
 }
 
 func setupJWTContext(conf *context.Config) *model.JWTContext {
-	dbOpt := &model.CouchdbOption{
-		HostPort:      conf.Couchdb.HostPort,
-		User:          conf.Couchdb.User,
-		Passwd:        conf.Couchdb.Passwd,
-		DefaultDBName: conf.Couchdb.DefaultDBName,
+	dbOpt := &couchdb.CouchDBOption{
+		HostPort: conf.Couchdb.HostPort,
+		User:     conf.Couchdb.User,
+		Passwd:   conf.Couchdb.Passwd,
+		Protocol: conf.Couchdb.Protocol,
 	}
 
 	registrarOpt := &model.FabricCARegistrar{
@@ -130,7 +135,7 @@ func setupJWTContext(conf *context.Config) *model.JWTContext {
 	}
 
 	opt := &model.Option{
-		Couchdb:        dbOpt,
+		CouchDBOpt:     dbOpt,
 		Registrar:      registrarOpt,
 		FabricGWOption: gwOpt,
 		JWTOpt:         jwtOpt,

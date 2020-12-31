@@ -21,7 +21,7 @@ couchdb:
   hostPort: "localhost:5984"
   user: "admin"
   passwd: "passwd"
-  defaultDbName: "useraccount"
+  protocol: "http"
 
 # jwt
 jwt:
