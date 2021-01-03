@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/hyperledger/fabric-sdk-go v1.0.0-rc1
-	github.com/leyle/fabric-user-manager v0.0.0-20201231101749-8833893c883b
+	github.com/leyle/fabric-user-manager v0.0.0-20210103171207-29d9b44a6551
 	github.com/leyle/go-api-starter v0.0.0-20201231091755-3028923aa2c1
 	github.com/rs/zerolog v1.20.0
 	github.com/spf13/viper v1.1.1

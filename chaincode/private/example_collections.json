@@ -1,0 +1,23 @@
+[
+  {
+    "name": "org1org2",
+    "policy": "OR('org1MSP.member', 'org2MSP.member')",
+    "requiredPeerCount": 1,
+    "maxPeerCount": 1,
+    "blockToLive": 0,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": true
+  },
+  {
+    "name": "org1private",
+    "policy": "OR('org1MSP.member')",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 1,
+    "blockToLive":0,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": false,
+    "endorsementPolicy": {
+      "signaturePolicy": "OR('org1MSP.member')"
+    }
+  }
+]

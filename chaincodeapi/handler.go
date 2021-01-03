@@ -20,7 +20,7 @@ type CreateForm struct {
 	Public *public.CreatePublicForm `json:"public"`
 
 	// private data
-	Private *private.PrivateForm `json:"private"`
+	Private *private.CreatePrivateForm `json:"private"`
 }
 
 func CreateHandler(ctx *context.ApiContext) {
@@ -30,7 +30,7 @@ func CreateHandler(ctx *context.ApiContext) {
 	ginhelper.StopExec(err)
 
 	apiResp := &model.ApiResponse{
-		Success: false,
+		Success: model.ResponseSuccessNone,
 		App:     form.App,
 		DataId:  form.DataId,
 	}
@@ -47,7 +47,14 @@ func CreateHandler(ctx *context.ApiContext) {
 	if privateForm != nil {
 		privateForm.App = form.App
 		privateForm.DataId = form.DataId
-		err = private.CallPrivateChainCode(ctx, privateForm)
+		privateResp := private.CallPrivateChainCode(ctx, privateForm)
+		if privateResp.Error != nil {
+			apiResp.ErrMsg = privateResp.Error.Error()
+			ginhelper.ReturnJson(c, 400, 400, "", apiResp)
+			return
+		}
+		ctx.Logger().Info().Msg("create private data success")
+		apiResp.Success = model.ResponseSuccessPartial
 	}
 
 	// 2. check if we need to create public data
@@ -61,9 +68,10 @@ func CreateHandler(ctx *context.ApiContext) {
 			ginhelper.ReturnJson(c, 400, 400, "", apiResp)
 			return
 		}
+		apiResp.Success = model.ResponseSuccessPartial
 	}
 
-	apiResp.Success = true
+	apiResp.Success = model.ResponseSuccessAll
 	ginhelper.ReturnOKJson(c, apiResp)
 }
 
@@ -73,19 +81,38 @@ func GetByIdHandler(ctx *context.ApiContext) {
 	ginhelper.StopExec(err)
 
 	apiResp := &model.ApiResponse{
-		Success: false,
+		Success: model.ResponseSuccessNone,
 		App:     form.App,
 		DataId:  form.DataId,
 	}
 
-	resp := public.CallPublicChaincodeGetById(ctx, &form)
-	if resp.Error != nil {
-		apiResp.ErrMsg = resp.Error.Error()
-		ginhelper.ReturnJson(ctx.C, 400, 400, "", apiResp)
+	if form.Public == nil && form.Private == nil {
+		ctx.Logger().Error().Msg("getbyid, but no public and private query args")
+		ginhelper.ReturnErrJson(ctx.C, "No public or private query args")
 		return
 	}
 
-	apiResp.CCResp = resp.CCRet
-	apiResp.Success = true
+	if form.Public != nil {
+		resp := public.CallPublicChaincodeGetById(ctx, &form)
+		if resp.Error != nil {
+			apiResp.ErrMsg = resp.Error.Error()
+			ginhelper.ReturnJson(ctx.C, 400, 400, "", apiResp)
+			return
+		}
+		apiResp.PublicCCResp = resp.CCRet
+		apiResp.Success = model.ResponseSuccessPartial
+	}
+	if form.Private != nil {
+		presp := private.CallPrivateChaincodeGetById(ctx, &form)
+		if presp.Error != nil {
+			apiResp.ErrMsg = presp.Error.Error()
+			ginhelper.ReturnJson(ctx.C, 400, 400, "", apiResp)
+			return
+		}
+		apiResp.PrivateCCResp = presp.CCRet
+		apiResp.Success = model.ResponseSuccessPartial
+	}
+
+	apiResp.Success = model.ResponseSuccessAll
 	ginhelper.ReturnOKJson(ctx.C, apiResp)
 }

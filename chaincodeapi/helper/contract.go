@@ -23,7 +23,7 @@ func (a *AppContract) Close() {
 func GetContract(ctx *context.ApiContext, channel, chaincode string) *AppContract {
 	ac := New()
 	curUser := jwtwrapper.GetCurUser(ctx.C)
-	gw, err := jwtwrapper.NewGateway(ctx.JWTCtx, curUser.UserId)
+	gw, err := jwtwrapper.NewGateway(ctx.JWTCtx, curUser.UserName)
 	if err != nil {
 		ac.Err = err
 		ctx.Logger().Error().Err(err).Str("channel", channel).Str("chaincode", chaincode).Msg("create fabric gateway failed")

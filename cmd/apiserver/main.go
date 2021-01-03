@@ -30,6 +30,7 @@ func main() {
 
 	err := conf.LoadConf(cfile)
 	if err != nil {
+		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 
@@ -45,6 +46,7 @@ func main() {
 
 	err = preCheck(ctx)
 	if err != nil {
+		fmt.Println(err.Error())
 		return
 	}
 

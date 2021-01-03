@@ -23,14 +23,22 @@ type CCApiResponse struct {
 	CCId string `json:"ccId"`
 }
 
+// can return both public and private data
+const (
+	ResponseSuccessAll     = "all"
+	ResponseSuccessPartial = "partial"
+	ResponseSuccessNone    = "none"
+)
+
 type ApiResponse struct {
 	// return input data
-	Success bool   `json:"success"`
+	Success string `json:"success"`
 	ErrMsg  string `json:"errMsg"`
 
-	CCResp json.RawMessage `json:"response"`
-	App    string          `json:"app"`
-	DataId string          `json:"dataId"`
+	PublicCCResp  json.RawMessage `json:"public"`
+	PrivateCCResp json.RawMessage `json:"private"`
+	App           string          `json:"app"`
+	DataId        string          `json:"dataId"`
 }
 
 // error type todo
@@ -48,7 +56,17 @@ type GetByIdForm struct {
 	// dataId, it should be unique in entire applications
 	DataId string `json:"dataId" binding:"required"`
 
-	// channel and chaincode
+	Public  *GetByIdPublicForm  `json:"public"`
+	Private *GetByIdPrivateForm `json:"private"`
+}
+
+type GetByIdPublicForm struct {
 	Channel   string `json:"channel" binding:"required"`
 	ChainCode string `json:"chaincode" binding:"required"`
+}
+
+type GetByIdPrivateForm struct {
+	Channel        string `json:"channel" binding:"required"`
+	ChainCode      string `json:"chaincode" binding:"required"`
+	CollectionName string `json:"collectionName"`
 }

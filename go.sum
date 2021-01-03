@@ -178,6 +178,8 @@ github.com/leyle/fabric-user-manager v0.0.0-20201230085816-811a29d8f4d5 h1:VwGO+
 github.com/leyle/fabric-user-manager v0.0.0-20201230085816-811a29d8f4d5/go.mod h1:wMv5TtcIeOqJDG9STskkvbot/0E4oFA0IkRhjekLUNI=
 github.com/leyle/fabric-user-manager v0.0.0-20201231101749-8833893c883b h1:OvMDR6iApibaerOZXmW8CDFlpi8lCZZcmUP5wgkcb1U=
 github.com/leyle/fabric-user-manager v0.0.0-20201231101749-8833893c883b/go.mod h1:VdAjTxgvbP1Vu6QInazWRpBBsNtjiMcs4yYseEA0a70=
+github.com/leyle/fabric-user-manager v0.0.0-20210103171207-29d9b44a6551 h1:csM2FpWtzXqOx9gHajOpWlSlm3iuDVXCI6hCf1juad0=
+github.com/leyle/fabric-user-manager v0.0.0-20210103171207-29d9b44a6551/go.mod h1:VdAjTxgvbP1Vu6QInazWRpBBsNtjiMcs4yYseEA0a70=
 github.com/leyle/ginbase v1.7.7 h1:gL8UN59oyPzsep4YOrTQByPvgYtv2ZFFF1o9xCDxnkw=
 github.com/leyle/ginbase v1.7.7/go.mod h1:7wkJ4BDrB496JOATTnTT+gTxTtV/gqsdD4F5qZ6p+tQ=
 github.com/leyle/go-api-starter v0.0.0-20201229134738-77fea7197eba h1:oa24726bpKfVzi9t+WZmhSgiHkztH6ckF+4Ql4nOBEE=

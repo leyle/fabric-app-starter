@@ -47,7 +47,7 @@ func CallPublicChainCodeCreate(ctx *context.ApiContext, form *CreatePublicForm) 
 func CallPublicChaincodeGetById(ctx *context.ApiContext, form *model.GetByIdForm) *model.CCApiResponse {
 	ccResp := model.NewCCApiResponse()
 	ccResp.DataId = form.DataId
-	contractRet := helper.GetContract(ctx, form.Channel, form.ChainCode)
+	contractRet := helper.GetContract(ctx, form.Public.Channel, form.Public.ChainCode)
 	if contractRet.Err != nil {
 		ccResp.Error = contractRet.Err
 		return ccResp
@@ -58,12 +58,12 @@ func CallPublicChaincodeGetById(ctx *context.ApiContext, form *model.GetByIdForm
 	// func (uc *UniversalContract) GetById(ctx contractapi.TransactionContextInterface, app, dataId string) (*StorageOut, error)
 	ret, err := contract.EvaluateTransaction(model.CCNameGetById, form.App, form.DataId)
 	if err != nil {
-		ctx.Logger().Error().Err(err).Str("channel", form.Channel).Str("chaincode", form.ChainCode).Msg("call public chaincode, get by id failed")
+		ctx.Logger().Error().Err(err).Str("channel", form.Public.Channel).Str("chaincode", form.Public.ChainCode).Msg("call public chaincode, get by id failed")
 		ccResp.Error = err
 		return ccResp
 	}
 
-	ctx.Logger().Info().Str("channel", form.Channel).Str("chaincode", form.ChainCode).Str("result", string(ret)).Msg("success")
+	ctx.Logger().Info().Str("channel", form.Public.Channel).Str("chaincode", form.Public.ChainCode).Str("result", string(ret)).Msg("success")
 	ccResp.CCRet = ret
 
 	return ccResp
