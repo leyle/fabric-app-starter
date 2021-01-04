@@ -1,10 +1,13 @@
 package chaincodeapi
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/leyle/fabric-app-starter/chaincodeapi/helper"
 	"github.com/leyle/fabric-app-starter/chaincodeapi/model"
 	"github.com/leyle/fabric-app-starter/chaincodeapi/private"
 	"github.com/leyle/fabric-app-starter/chaincodeapi/public"
 	"github.com/leyle/fabric-app-starter/context"
+	"github.com/leyle/go-api-starter/couchdb"
 	"github.com/leyle/go-api-starter/ginhelper"
 )
 
@@ -115,4 +118,60 @@ func GetByIdHandler(ctx *context.ApiContext) {
 
 	apiResp.Success = model.ResponseSuccessAll
 	ginhelper.ReturnOKJson(ctx.C, apiResp)
+}
+
+// search handler
+type CCSearchForm struct {
+	Channel   string `json:"channel" binding:"required"`
+	Chaincode string `json:"chaincode" binding:"required"`
+	// if collectionName is not null, we search private chaincode database
+	CollectionName string `json:"collectionName"`
+
+	Selector interface{} `json:"selector" binding:"required"`
+	Sort     interface{} `json:"sort,omitempty"`
+	Page     int         `json:"page"`
+	Size     int         `json:"size"`
+}
+
+func SearchHandler(ctx *context.ApiContext) {
+	var form CCSearchForm
+	err := ctx.C.BindJSON(&form)
+	ginhelper.StopExec(err)
+
+	dbName := helper.GenerateCouchdbDatabaseName(form.Channel, form.Chaincode, form.CollectionName)
+	ds := helper.GetCouchdbClient(ctx, dbName)
+
+	limit := form.Size
+	page := form.Page
+	if page <= 1 {
+		page = 1
+	}
+	skip := (page - 1) * form.Size
+
+	searchReq := &couchdb.SearchRequest{
+		Selector: form.Selector,
+		Sort:     form.Sort,
+		Limit:    limit,
+		Skip:     skip,
+	}
+
+	resp, err := ds.Search(ctx.C.Request.Context(), searchReq, nil)
+	if err != nil {
+		ctx.Logger().Error().Err(err).Msg("search couchdb failed")
+		ginhelper.ReturnErrJson(ctx.C, err.Error())
+		return
+	}
+
+	docs := resp.Docs
+	bookmark := resp.Bookmark
+	ctx.Logger().Info().Str("bookmark", bookmark).Int("page", page).Int("size", form.Size).Send()
+
+	retData := gin.H{
+		"page": page,
+		"size": form.Size,
+		"data": docs,
+	}
+
+	ginhelper.ReturnOKJson(ctx.C, retData)
+	return
 }

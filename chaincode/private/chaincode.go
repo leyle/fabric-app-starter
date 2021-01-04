@@ -18,10 +18,10 @@ type UniversalContract struct {
 
 // input transient data
 type TransientInput struct {
-	CollectionName string          `json:"collectionName"`
-	App            string          `json:"app"`    // client app name
-	DataId         string          `json:"dataId"` // client data unique id
-	Data           json.RawMessage `json:"data"`   // user input data, json encoded
+	CollectionName string `json:"collectionName"`
+	App            string `json:"app"`    // client app name
+	DataId         string `json:"dataId"` // client data unique id
+	Data           string `json:"data"`   // user input data, json encoded
 }
 
 // data store in private data
@@ -98,7 +98,7 @@ func (uc *UniversalContract) Create(ctx contractapi.TransactionContextInterface,
 		CollectionName: inputData.CollectionName,
 		App:            inputData.App,
 		DataId:         inputData.DataId,
-		Data:           inputData.Data,
+		Data:           []byte(inputData.Data),
 		CreatedAt:      time.Now().Unix(),
 	}
 

@@ -23,6 +23,9 @@ type Config struct {
 	// couchdb options
 	Couchdb *CouchdbOption `json:"couchdb" yaml:"couchdb"`
 
+	// world state ledger couchdb options
+	DbState *CouchdbOption `json:"dbstate" yaml:"dbstate"`
+
 	// JWT
 	JWT *JWTOption `json:"jwt" yaml:"jwt"`
 }
