@@ -1,6 +1,7 @@
 package chaincodeapi
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/leyle/fabric-app-starter/chaincodeapi/helper"
 	"github.com/leyle/fabric-app-starter/chaincodeapi/model"
@@ -174,4 +175,42 @@ func SearchHandler(ctx *context.ApiContext) {
 
 	ginhelper.ReturnOKJson(ctx.C, retData)
 	return
+}
+
+type CreateStateForm struct {
+	DataId  string                  `json:"dataId"`
+	AppName string                  `json:"appName"`
+	Public  *CreatePublicStateForm  `json:"public"`
+	Private *CreatePrivateStateForm `json:"private"`
+}
+
+type CreatePublicStateForm struct {
+	Channel   string `json:"channel" binding:"required"`
+	Chaincode string `json:"chaincode" binding:"required"`
+	DataJson  string `json:"dataJson" binding:"required"`
+}
+
+type CreatePrivateStateForm struct {
+	Channel     string              `json:"channel" binding:"required"`
+	Chaincode   string              `json:"chaincode" binding:"required"`
+	Collections *CollectionNameForm `json:"collections" binding:"required"`
+}
+
+type CollectionNameForm struct {
+	Self  string   `json:"self"`
+	Share []string `json:"share"`
+}
+
+func CreateStateHandler(ctx *context.ApiContext) {
+	var form CreateStateForm
+	err := ctx.C.BindJSON(&form)
+	ginhelper.StopExec(err)
+
+	apiResp := model.NewApiResponse(form.AppName, form.DataId)
+
+	// if has private data, create if first
+	if form.Private != nil {
+		fmt.Println(apiResp)
+	}
+
 }

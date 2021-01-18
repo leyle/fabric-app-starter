@@ -41,8 +41,12 @@ type ApiResponse struct {
 	DataId        string          `json:"dataId"`
 }
 
-// error type todo
-type CCError struct {
+func NewApiResponse(app, id string) *ApiResponse {
+	return &ApiResponse{
+		Success: ResponseSuccessNone,
+		App:     app,
+		DataId:  id,
+	}
 }
 
 func NewCCApiResponse() *CCApiResponse {
