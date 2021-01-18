@@ -87,10 +87,13 @@ func (uc *UniversalContract) Create(ctx contractapi.TransactionContextInterface,
 	}
 
 	// check submitter submits data from its own peer
-	err = IsSubmitterFromSameOrg(ctx)
-	if err != nil {
-		return err
-	}
+	/*
+		err = IsSubmitterFromSameOrg(ctx)
+		if err != nil {
+			return err
+		}
+
+	*/
 
 	// save it
 	storageIn := &StorageIn{
