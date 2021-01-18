@@ -1,9 +1,9 @@
 package public
 
 import (
-	"github.com/leyle/fabric-app-starter/chaincodeapi/helper"
-	"github.com/leyle/fabric-app-starter/chaincodeapi/model"
-	"github.com/leyle/fabric-app-starter/context"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi/helper"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi/model"
+	"github.com/leyle/fabric-app-starter/api/context"
 )
 
 // call public chaincode

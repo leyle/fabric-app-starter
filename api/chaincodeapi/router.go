@@ -2,8 +2,8 @@ package chaincodeapi
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/leyle/fabric-app-starter/chaincodeapi/dbstate"
-	"github.com/leyle/fabric-app-starter/context"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi/dbstate"
+	"github.com/leyle/fabric-app-starter/api/context"
 )
 
 func ChaincodeMiddlewareRouter(ctx *context.ApiContext, g *gin.RouterGroup) {

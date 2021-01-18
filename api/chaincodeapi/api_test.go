@@ -3,8 +3,8 @@ package chaincodeapi
 import (
 	"context"
 	"encoding/json"
-	"github.com/leyle/fabric-app-starter/chaincodeapi/private"
-	"github.com/leyle/fabric-app-starter/chaincodeapi/public"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi/private"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi/public"
 	"github.com/leyle/go-api-starter/httpclient"
 	"github.com/leyle/go-api-starter/logmiddleware"
 	"github.com/leyle/go-api-starter/util"

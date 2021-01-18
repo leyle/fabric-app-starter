@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/leyle/fabric-app-starter/chaincodeapi"
-	"github.com/leyle/fabric-app-starter/context"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi"
+	"github.com/leyle/fabric-app-starter/api/context"
 	"github.com/leyle/fabric-user-manager/apirouter"
 	"github.com/leyle/fabric-user-manager/model"
 	"github.com/leyle/go-api-starter/couchdb"
@@ -62,7 +62,7 @@ func httpServer(ctx *context.ApiContext) {
 	var err error
 	logger := logmiddleware.GetLogger(logmiddleware.LogTargetStdout)
 
-	e := ginhelper.SetupGin(&logger)
+	e := ginhelper.SetupGin(logger)
 	if ctx.Cfg.Debug {
 		ginhelper.PrintHeaders = true
 	}

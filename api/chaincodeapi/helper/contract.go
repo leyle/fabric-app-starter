@@ -2,7 +2,7 @@ package helper
 
 import (
 	"github.com/hyperledger/fabric-sdk-go/pkg/gateway"
-	"github.com/leyle/fabric-app-starter/context"
+	"github.com/leyle/fabric-app-starter/api/context"
 	"github.com/leyle/fabric-user-manager/jwtwrapper"
 )
 

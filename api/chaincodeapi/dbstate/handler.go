@@ -1,8 +1,8 @@
 package dbstate
 
 import (
-	"github.com/leyle/fabric-app-starter/chaincodeapi/helper"
-	"github.com/leyle/fabric-app-starter/context"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi/helper"
+	"github.com/leyle/fabric-app-starter/api/context"
 	"github.com/leyle/go-api-starter/ginhelper"
 	"strings"
 )

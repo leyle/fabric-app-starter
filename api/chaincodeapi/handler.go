@@ -3,11 +3,11 @@ package chaincodeapi
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/leyle/fabric-app-starter/chaincodeapi/helper"
-	"github.com/leyle/fabric-app-starter/chaincodeapi/model"
-	"github.com/leyle/fabric-app-starter/chaincodeapi/private"
-	"github.com/leyle/fabric-app-starter/chaincodeapi/public"
-	"github.com/leyle/fabric-app-starter/context"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi/helper"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi/model"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi/private"
+	"github.com/leyle/fabric-app-starter/api/chaincodeapi/public"
+	"github.com/leyle/fabric-app-starter/api/context"
 	"github.com/leyle/go-api-starter/couchdb"
 	"github.com/leyle/go-api-starter/ginhelper"
 )
