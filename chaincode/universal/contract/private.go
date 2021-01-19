@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
-	"github.com/leyle/fabric-app-starter/chaincode/universal/model"
+	"github.com/leyle/fabric-app-starter/chaincode/universal/ledgerstate"
 	"time"
 )
 
@@ -25,7 +25,7 @@ func (pc *Contract) CreatePrivate(ctx contractapi.TransactionContextInterface, t
 		return err
 	}
 
-	var inputData model.TransientForm
+	var inputData ledgerstate.TransientForm
 	err = json.Unmarshal(tJson, &inputData)
 	if err != nil {
 		err = fmt.Errorf("unmarshal input transient data failed, %s", err.Error())
@@ -33,10 +33,10 @@ func (pc *Contract) CreatePrivate(ctx contractapi.TransactionContextInterface, t
 		return err
 	}
 
-	privateState := &model.PrivateState{
+	privateState := &ledgerstate.PrivateState{
 		Id:           inputData.Id,
 		PublicDataId: inputData.PublicDataId,
-		Data:         []byte(inputData.Data),
+		DataJson:     []byte(inputData.Data),
 		CreatedAt:    time.Now().Unix(),
 	}
 
@@ -55,4 +55,29 @@ func (pc *Contract) CreatePrivate(ctx contractapi.TransactionContextInterface, t
 	}
 
 	return nil
+}
+
+func (pc *Contract) GetPrivateStateById(ctx contractapi.TransactionContextInterface, id, collectionName string) (*ledgerstate.PrivateState, error) {
+	state, err := ctx.GetStub().GetPrivateData(collectionName, id)
+	if err != nil {
+		fmt.Println("get private state by id failed,", id, collectionName, err.Error())
+		return nil, err
+	}
+	if state == nil {
+		fmt.Println("get private state by id, no data", id, collectionName)
+		return nil, ErrNoIdData
+	}
+
+	var privateState ledgerstate.PrivateState
+	err = json.Unmarshal(state, &privateState)
+	if err != nil {
+		fmt.Println("get private state by id, unmarshal failed,", id, err.Error())
+		return nil, err
+	}
+
+	dataJson := privateState.DataJson
+	privateState.DataString = string(dataJson)
+	privateState.DataJson = nil
+
+	return &privateState, nil
 }

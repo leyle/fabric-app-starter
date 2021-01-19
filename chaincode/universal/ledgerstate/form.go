@@ -1,4 +1,4 @@
-package model
+package ledgerstate
 
 // private data input form, we use transient data
 type TransientForm struct {

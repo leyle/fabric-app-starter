@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 	"github.com/leyle/fabric-app-starter/chaincode/universal/helper"
-	"github.com/leyle/fabric-app-starter/chaincode/universal/model"
+	"github.com/leyle/fabric-app-starter/chaincode/universal/ledgerstate"
 	"time"
 )
 
 func (pc *Contract) CreatePublic(ctx contractapi.TransactionContextInterface, args string) error {
 	// unmarshal args to public input form
-	var form model.PublicStateForm
+	var form ledgerstate.PublicStateForm
 	err := json.Unmarshal([]byte(args), &form)
 	if err != nil {
 		fmt.Println(err)
@@ -33,12 +33,12 @@ func (pc *Contract) CreatePublic(ctx contractapi.TransactionContextInterface, ar
 	creatorId, _ := helper.GetClientID(ctx)
 
 	// save into public state ledger
-	publicState := &model.PublicState{
+	publicState := &ledgerstate.PublicState{
 		Id:              form.Id,
 		AppName:         form.AppName,
 		CreatorMSPID:    creatorMSPId,
 		CreatorId:       creatorId,
-		Data:            []byte(form.Data),
+		DataJson:        []byte(form.Data),
 		PrivateMetaInfo: form.PrivateMetaInfo,
 		CreatedAt:       time.Now().Unix(),
 	}
@@ -64,4 +64,29 @@ func (pc *Contract) IsExists(ctx contractapi.TransactionContextInterface, id str
 		return false, nil
 	}
 	return true, nil
+}
+
+func (pc *Contract) GetPublicStateById(ctx contractapi.TransactionContextInterface, id string) (*ledgerstate.PublicState, error) {
+	state, err := ctx.GetStub().GetState(id)
+	if err != nil {
+		fmt.Println("get public state by id failed,", id, err.Error())
+		return nil, err
+	}
+	if state == nil {
+		fmt.Println("get public state by id, data doesn't exists", id)
+		return nil, ErrNoIdData
+	}
+
+	var publicState ledgerstate.PublicState
+	err = json.Unmarshal(state, &publicState)
+	if err != nil {
+		fmt.Println("get public state by id, unmarshal failed,", id, err.Error())
+		return nil, err
+	}
+
+	reqData := publicState.DataJson
+	publicState.DataString = string(reqData)
+	publicState.DataJson = nil
+
+	return &publicState, nil
 }
