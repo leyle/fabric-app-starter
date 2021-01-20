@@ -12,6 +12,12 @@ fabric:
   walletPath: "/tmp/.fabricappworkdir/wallet"
   orgName: "org1"
 
+# private collection config
+privateCfg:
+  mspid: org1MSP
+  noShare: "org1NoShare"
+  shareWrite: "org1ShareWrite"
+
 # used for jwt and ca registrar
 admin:
   username: "orgadmin"

@@ -78,8 +78,7 @@ func httpServer(ctx *context.ApiContext) {
 	apirouter.JWTRouter(ctx.JWTCtx, apiRouter.Group(""))
 
 	// chaincode api
-	// chaincodeapi.PublicAndPrivateRouter(ctx, apiRouter.Group(""))
-	chaincodeapi.ChaincodeMiddlewareRouter(ctx, apiRouter.Group(""))
+	chaincodeapi.ChaincodeRouter(ctx, apiRouter.Group(""))
 
 	addr := ctx.Cfg.Server.GetServerAddr()
 	err = e.Run(addr)

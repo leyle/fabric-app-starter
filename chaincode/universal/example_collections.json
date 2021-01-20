@@ -1,0 +1,38 @@
+[
+  {
+    "name": "orgnoshare",
+    "policy": "OR('org1MSP.member')",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 1,
+    "blockToLive": 0,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": true
+  },
+  {
+    "name": "org1sharewrite",
+    "policy": "OR('org1MSP.member')",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 1,
+    "blockToLive": 0,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": false
+  },
+  {
+    "name": "org2noshare",
+    "policy": "OR('org2MSP.member')",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 1,
+    "blockToLive": 0,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": true
+  },
+  {
+    "name": "org2sharewrite",
+    "policy": "OR('org2MSP.member')",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 1,
+    "blockToLive": 0,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": false
+  }
+]

@@ -3,8 +3,6 @@ package chaincodeapi
 import (
 	"context"
 	"encoding/json"
-	"github.com/leyle/fabric-app-starter/api/chaincodeapi/private"
-	"github.com/leyle/fabric-app-starter/api/chaincodeapi/public"
 	"github.com/leyle/go-api-starter/httpclient"
 	"github.com/leyle/go-api-starter/logmiddleware"
 	"github.com/leyle/go-api-starter/util"
@@ -91,10 +89,10 @@ func TestCreateHandler(t *testing.T) {
 
 	reqJson, _ := json.Marshal(reqPublic)
 
-	publicData := &public.CreatePublicForm{
-		Channel:   publicChannel,
-		ChainCode: publicChaincode,
-		DataJson:  string(reqJson),
+	publicData := &CreatePublicStateForm{
+		Channel:    publicChannel,
+		Chaincode:  publicChaincode,
+		DataString: string(reqJson),
 	}
 
 	fileList := &CustomerConsentFileList{
@@ -117,16 +115,15 @@ func TestCreateHandler(t *testing.T) {
 	}
 	reqPrivateJson, _ := json.Marshal(reqPrivate)
 
-	privateData := &private.CreatePrivateForm{
-		Channel:        privateChannel,
-		ChainCode:      privateChaincode,
-		CollectionName: collectionName,
-		DataJson:       string(reqPrivateJson),
+	privateData := &CreatePrivateStateForm{
+		Channel:    privateChannel,
+		Chaincode:  privateChaincode,
+		DataString: string(reqPrivateJson),
 	}
 
-	reqData := &CreateForm{
-		App:     "customerConsent",
-		DataId:  util.GenerateDataId(),
+	reqData := &CreateStateForm{
+		DataId:  "",
+		AppName: "",
 		Public:  publicData,
 		Private: privateData,
 	}

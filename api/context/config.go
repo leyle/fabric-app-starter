@@ -16,6 +16,9 @@ type Config struct {
 	// fabric gateway config
 	Fabric *FabricGWOption `json:"fabric" yaml:"fabric"`
 
+	// private data collection config
+	PrivateCfg *PrivateCfgOption `json:"privateCfg" yaml:"privateCfg"`
+
 	// system initial admin
 	// ca registrar
 	Admin *AdminOption `json:"admin" yaml:"admin"`
@@ -61,6 +64,12 @@ type CouchdbOption struct {
 type JWTOption struct {
 	Secret      string `json:"secret" yaml:"secret"`
 	ExpireHours int    `json:"expireHours" yaml:"exporeHours"`
+}
+
+type PrivateCfgOption struct {
+	MSPID      string `json:"mspid" yaml:"mspid"`
+	NoShare    string `json:"noShare" yaml:"noShare"`
+	ShareWrite string `json:"shareWrite" yaml:"shareWrite"`
 }
 
 func (c *Config) LoadConf(filePath string) error {
